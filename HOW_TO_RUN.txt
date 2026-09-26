@@ -1,0 +1,152 @@
+================================================================================
+  INTEGRATED POLAR EXPEDITION LOGISTICS & ASSET MANAGEMENT SYSTEM (PROTOTYPE)
+  National Centre for Polar and Ocean Research (NCPOR) / MoES
+================================================================================
+
+HOW TO RUN THE APPLICATION (STEP-BY-STEP GUIDE)
+--------------------------------------------------------------------------------
+
+TABLE OF CONTENTS:
+  1. Prerequisites & Windows Setup
+  2. Option 1: Standard Local Execution (Recommended - No Docker Required)
+  3. Option 2: One-Command Root Execution
+  4. Option 3: Docker Compose (Full Stack with PostGIS)
+  5. URLs & Endpoints
+  6. Common Troubleshooting & Fixes
+
+
+--------------------------------------------------------------------------------
+1. PREREQUISITES & WINDOWS SETUP
+--------------------------------------------------------------------------------
+- Node.js: v18 or higher (v20+ recommended)
+- npm: v9 or higher
+
+* WINDOWS POWERSHELL NOTE:
+  If you see an error like:
+  "File npm.ps1 cannot be loaded because running scripts is disabled on this system"
+  Run this command once in your PowerShell window:
+      Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+  OR simply use "npm.cmd" instead of "npm" (or use Command Prompt cmd.exe).
+
+
+--------------------------------------------------------------------------------
+2. OPTION 1: STANDARD LOCAL EXECUTION (RECOMMENDED)
+--------------------------------------------------------------------------------
+The backend includes a zero-config in-memory / SQLite data store with automatic
+mock telemetry, so neither PostgreSQL nor Docker is required for local execution.
+
+STEP 1: INSTALL DEPENDENCIES (If not already installed)
+------------------------------------------------------
+Open PowerShell or Command Prompt:
+
+  1) Install backend packages:
+     cd c:\Users\nitin\projects\polar_logistics\backend
+     npm.cmd install
+
+  2) Install frontend packages:
+     cd c:\Users\nitin\projects\polar_logistics\frontend
+     npm.cmd install
+
+(Note: If you are using Git Bash or CMD, you can simply type "npm install")
+
+
+STEP 2: START THE BACKEND SERVICE (PORT 4000)
+---------------------------------------------
+Open Terminal 1:
+
+  cd c:\Users\nitin\projects\polar_logistics\backend
+  npm.cmd run dev
+
+Expected output:
+  - Backend listening on http://localhost:4000
+  - WebSocket live telemetry active on ws://localhost:4000
+  - Polar background telemetry loop initialized (3s ticks)
+
+
+STEP 3: START THE FRONTEND WEB CONSOLE (PORT 3000)
+--------------------------------------------------
+Open Terminal 2:
+
+  cd c:\Users\nitin\projects\polar_logistics\frontend
+  npm.cmd run dev
+
+Expected output:
+  - Ready in ... ms
+  - Local: http://localhost:3000
+
+
+STEP 4: OPEN IN YOUR BROWSER
+----------------------------
+Open your web browser and navigate to:
+  http://localhost:3000
+
+
+--------------------------------------------------------------------------------
+3. OPTION 2: ONE-COMMAND ROOT EXECUTION
+--------------------------------------------------------------------------------
+You can start both Backend and Frontend together from the root project folder:
+
+  1) Install root dependencies:
+     cd c:\Users\nitin\projects\polar_logistics
+     npm.cmd install
+
+  2) Start both servers simultaneously:
+     npm.cmd run dev
+
+This uses 'concurrently' to run both backend (Port 4000) and frontend (Port 3000)
+in a single terminal window.
+
+
+--------------------------------------------------------------------------------
+4. OPTION 3: DOCKER COMPOSE DEPLOYMENT (WITH POSTGIS)
+--------------------------------------------------------------------------------
+If Docker Desktop is installed and running on your machine:
+
+  1) Open terminal in the project root:
+     cd c:\Users\nitin\projects\polar_logistics
+
+  2) Launch all containers:
+     docker compose up -d --build
+
+  This starts:
+  - polar_postgis  : PostgreSQL 16 + PostGIS extension (Port 5432)
+  - polar_backend  : Express API server (Port 4000)
+  - polar_frontend : Next.js Web Console (Port 3000)
+
+  3) To view container logs:
+     docker compose logs -f
+
+  4) To stop all containers:
+     docker compose down
+
+
+--------------------------------------------------------------------------------
+5. URLS & ENDPOINTS
+--------------------------------------------------------------------------------
+- Frontend Mission Console   : http://localhost:3000
+- Backend Health Check       : http://localhost:4000/health
+- Backend REST API Base      : http://localhost:4000/api
+- Live WebSocket Telemetry   : ws://localhost:4000
+
+
+--------------------------------------------------------------------------------
+6. COMMON TROUBLESHOOTING & FIXES
+--------------------------------------------------------------------------------
+
+Issue A: "Error: listen EADDRINUSE: address already in use :::3000 (or :::4000)"
+  Cause  : A previous instance of Next.js or Node.js is already running.
+  Fix    : Find and kill the process occupying the port:
+           In PowerShell:
+             # Find process ID (PID) on port 3000 or 4000:
+             netstat -ano | findstr :3000
+             # Terminate the process (replace <PID> with the number in the last column):
+             taskkill /PID <PID> /F
+
+Issue B: "Script execution disabled" in PowerShell
+  Fix    : Run: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+           Or run with npm.cmd instead of npm.
+
+Issue C: Frontend cannot connect to backend telemetry
+  Fix    : Ensure backend is running in Terminal 1 on http://localhost:4000.
+           Verify by visiting http://localhost:4000/health in your browser.
+================================================================================

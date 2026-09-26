@@ -1,0 +1,30 @@
+{
+  "name": "polar-logistics-system",
+  "version": "1.0.0",
+  "description": "Integrated Polar Expedition Logistics & Asset Management System (Prototype) - NCPOR / MoES",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "start": "concurrently \"cd backend && npm start\" \"cd frontend && npm start\"",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "keywords": [
+    "antarctica",
+    "ncpor",
+    "maitri",
+    "bharati",
+    "logistics",
+    "polar",
+    "offline-first"
+  ],
+  "author": "Smart India Hackathon Team - NCPOR / MoES",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
